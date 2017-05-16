@@ -2,6 +2,8 @@ clone_depth: 200
 version: '0.18.{build}'
 
 environment:
+  my_secret:
+    secure: +3IhWT10lCSC4GE4gGfWt8WiZdIXuMUfaImgvQUullg=
   matrix:
     - QTDIR: C:\Qt\5.8\msvc2013_64
       PUSH_RELEASE: true
@@ -16,6 +18,7 @@ configuration: Release
 
 install:
   - choco install -y qbs
+  - nuget install secure-file -ExcludeVersion
   - set PATH=%PATH%;%QTDIR%\bin;%MINGW%\bin
 
 build_script:
@@ -42,6 +45,8 @@ after_build:
   - cd ..
   - cd archive*
   - move tiled-*.7z %APPVEYOR_BUILD_FOLDER%
+  - cd ..\..
+  - if defined TILED_SNAPSHOT dist\win\push-to-itch.bat
 
 artifacts:
   - name: Installer
